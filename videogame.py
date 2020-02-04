@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 from tkinter import *
+import _curses as curses
 
 # def printBoard():
 #     print(" ---" * len(my_board[0]))
@@ -19,18 +20,20 @@ class boardGame(Frame):
     # def canvas_size(self):
     #     return(self.width * square_size, self.height * square_size)
 
-    my_board = [('0', '0', '0', '0', '0', '0', '0'),
-                ('0', '1', '1', '1', '1', '1', '0'),
-                ('0', '1', '1', '1', '1', '1', '0'),
-                ('0', '1', '1', 'x', '1', '1', '0'),
-                ('0', '1', '1', '1', '1', '1', '0'),
-                ('0', '1', '1', '1', '1', '1', '0'),
-                ('0', '1', '1', '1', '1', '1', '0'),
-                ('0', '0', '0', '0', '0', '0', '0')]
+    my_board = [['0', '0', '0', '0', '0', '0', '0'],
+                ['0', '1', '1', '1', '1', '1', '0'],
+                ['0', '1', '1', '1', '1', '1', '0'],
+                ['0', '1', '1', 'x', '1', '1', '0'],
+                ['0', '1', '1', '1', '1', '1', '0'],
+                ['0', '1', '1', '1', '1', '1', '0'],
+                ['0', '1', '1', '1', '1', '1', '0'],
+                ['0', '0', '0', '0', '0', '0', '0']]
 
     def __init__(self, parent, square_size=30):
         self.width = 7
         self.height = 8
+        self.userX = 3
+        self.userY = 3
         canvas_width = self.width * square_size
         canvas_height = self.height * square_size
 
@@ -41,7 +44,10 @@ class boardGame(Frame):
 
         self.canvas = Canvas(self, width=canvas_width, height=canvas_height, bg="white")
         # self.canvas.create_image(480, 480, image=self.gif1, anchor=NW)
-        self.canvas.bind("<Key>", self.key)
+        self.canvas.bind("<Left>", self.leftkey)
+        self.canvas.bind("<Right>", self.rightkey)
+        self.canvas.bind("<Up>", self.upkey)
+        self.canvas.bind("<Down>", self.downkey)
         print("Use the arrow keys to move around")
         # self.canvas.bind("<Button-1>", self.click)
 
@@ -58,8 +64,6 @@ class boardGame(Frame):
     def drawBoard(self, square_size=30):
         for row in range(self.height):
             for col in range(self.width):
-                print("row : %d" % row)
-                print("col : %d" % col)
                 x1 = col * square_size
                 y1 = (self.height - 1 - row) * square_size
                 x2 = x1 + square_size
@@ -73,8 +77,26 @@ class boardGame(Frame):
                     self.canvas.create_rectangle(x1, y1, x2, y2, outline="black", fill="red", tags="square")
         self.canvas.tag_lower("square")
 
-    def key(self, event):
-        print("pressed ")
+    def leftkey(self, event):
+        newX = self.userX - 1
+        newY = self.userY
+
+        self.my_board[newY][newX] = 'x'
+        self.my_board[self.userY][self.userX] = '1'
+
+        # self.userX
+
+        self.drawBoard()
+
+
+    def rightkey(self, event):
+        print("pressed : left")
+
+    def upkey(self, event):
+        print("pressed : left")
+
+    def downkey(self, event):
+        print("pressed : left")
 
     # def click(self, event):
     #     print("clicked")
