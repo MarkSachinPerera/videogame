@@ -2,25 +2,15 @@
 
 from tkinter import *
 
-my_board = [('0', '0', '0', '0', '0', '0', '0'),
-            ('0', '1', '1', '1', '1', '1', '0'),
-            ('0', '1', '1', 'x', '1', '1', '0'),
-            ('0', '1', '1', '1', '1', '1', '0'),
-            ('0', '0', '0', '0', '0', '0', '0')]
-
-HEIGHT = 5
-WIDTH = 7
-
-
-def printBoard():
-    print(" ---" * len(my_board[0]))
-
-    for i in my_board:
-        print("|", end=' ')
-        for j in i:
-            print("%s |" % j, end=' ')
-        print("")
-        print(" ---" * len(my_board[0]))
+# def printBoard():
+#     print(" ---" * len(my_board[0]))
+#
+#     for i in my_board:
+#         print("|", end=' ')
+#         for j in i:
+#             print("%s |" % j, end=' ')
+#         print("")
+#         print(" ---" * len(my_board[0]))
 
 
 class boardGame(Frame):
@@ -29,9 +19,18 @@ class boardGame(Frame):
     # def canvas_size(self):
     #     return(self.width * square_size, self.height * square_size)
 
+    my_board = [('0', '0', '0', '0', '0', '0', '0'),
+                ('0', '1', '1', '1', '1', '1', '0'),
+                ('0', '1', '1', '1', '1', '1', '0'),
+                ('0', '1', '1', 'x', '1', '1', '0'),
+                ('0', '1', '1', '1', '1', '1', '0'),
+                ('0', '1', '1', '1', '1', '1', '0'),
+                ('0', '1', '1', '1', '1', '1', '0'),
+                ('0', '0', '0', '0', '0', '0', '0')]
+
     def __init__(self, parent, square_size=30):
-        self.width = 6
-        self.height = 6
+        self.width = 7
+        self.height = 8
         canvas_width = self.width * square_size
         canvas_height = self.height * square_size
 
@@ -44,7 +43,7 @@ class boardGame(Frame):
         # self.canvas.create_image(480, 480, image=self.gif1, anchor=NW)
         self.canvas.bind("<Key>", self.key)
         print("Use the arrow keys to move around")
-        self.canvas.bind("<Button-1>", self.click)
+        # self.canvas.bind("<Button-1>", self.click)
 
         self.canvas.pack(side="top", fill="both", anchor="c", expand=True)
 
@@ -56,22 +55,29 @@ class boardGame(Frame):
         Y (fill only vertically), or BOTH (fill both horizontally and vertically).
         '''
 
-    def drawBoard(self,square_size=30):
-        for row in range(self.width):
-            for col in range(self.height):
+    def drawBoard(self, square_size=30):
+        for row in range(self.height):
+            for col in range(self.width):
+                print("row : %d" % row)
+                print("col : %d" % col)
                 x1 = col * square_size
-                y1 = (5-row) * square_size
+                y1 = (self.height - 1 - row) * square_size
                 x2 = x1 + square_size
                 y2 = y1 + square_size
-                self.canvas.create_rectangle(x1, y1, x2, y2, outline="black", fill="dark gray", tags="square")
 
+                if self.my_board[row][col] == '0':
+                    self.canvas.create_rectangle(x1, y1, x2, y2, outline="black", fill="dark gray", tags="square")
+                elif self.my_board[row][col] == '1':
+                    self.canvas.create_rectangle(x1, y1, x2, y2, outline="black", fill="green", tags="square")
+                elif self.my_board[row][col] == 'x':
+                    self.canvas.create_rectangle(x1, y1, x2, y2, outline="black", fill="red", tags="square")
         self.canvas.tag_lower("square")
 
     def key(self, event):
         print("pressed ")
 
-    def click(self, event):
-        print("clicked")
+    # def click(self, event):
+    #     print("clicked")
 
 
 def main():
