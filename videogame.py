@@ -21,15 +21,15 @@ class boardGame(Frame):
     #     return(self.width * square_size, self.height * square_size)
 
     my_board = [['0', '0', '0', '0', '0', '0', '0'],
-                ['0', '1', '1', '1', '1', '1', '0'],
-                ['0', '1', '1', '1', '1', '1', '0'],
-                ['1', '1', '1', 'x', '1', '1', '0'],
+                ['0', '1', '1', '1', '1', 'T', '0'],
+                ['0', '1', '1', '1', '1', 'X', '0'],
+                ['1', '1', '1', 'U', '1', '1', '0'],
                 ['0', '1', '1', '1', '1', '1', '0'],
                 ['0', '1', '1', '1', '0', '1', '0'],
-                ['0', '1', '1', '1', '1', '1', '0'],
+                ['0', '1', '1', '1', 'X', 'T', '0'],
                 ['0', '0', '0', '0', '0', '0', '0']]
 
-    def __init__(self, parent, square_size=30):
+    def __init__(self, parent, square_size=92):
         self.width = 7
         self.height = 8
         self.userX = 3
@@ -38,7 +38,8 @@ class boardGame(Frame):
         canvas_height = self.height * square_size
 
         self.parent = parent
-        # self.S = PhotoImage(file='sample-gif-2.gif')
+        self.gif_dirt = PhotoImage(file='dirtblock.png')
+        self.gif_tnt = PhotoImage(file='TNT.png')
 
         Frame.__init__(self, parent)
 
@@ -61,7 +62,7 @@ class boardGame(Frame):
         Y (fill only vertically), or BOTH (fill both horizontally and vertically).
         '''
 
-    def drawBoard(self, square_size=30):
+    def drawBoard(self, square_size=92):
         for row in range(self.height):
             for col in range(self.width):
                 x1 = col * square_size
@@ -73,8 +74,14 @@ class boardGame(Frame):
                     self.canvas.create_rectangle(x1, y1, x2, y2, outline="black", fill="dark gray", tags="square")
                 elif self.my_board[row][col] == '1':
                     self.canvas.create_rectangle(x1, y1, x2, y2, outline="black", fill="green", tags="square")
-                elif self.my_board[row][col] == 'x':
+                elif self.my_board[row][col] == 'U':
                     self.canvas.create_rectangle(x1, y1, x2, y2, outline="black", fill="red", tags="square")
+                elif self.my_board[row][col] == 'T':
+                    self.canvas.create_rectangle(x1, y1, x2, y2, outline="black", fill="green", tags="square")
+                    self.canvas.create_image(x1 + (square_size / 2), y1 + (square_size / 2), image=self.gif_tnt)
+                elif self.my_board[row][col] == 'X':
+                    self.canvas.create_rectangle(x1, y1, x2, y2, outline="black", fill="green", tags="square")
+                    self.canvas.create_image(x1 + (square_size / 2), y1 + (square_size / 2), image=self.gif_dirt)
         self.canvas.tag_lower("square")
 
     def leftkey(self, event):
@@ -100,7 +107,7 @@ class boardGame(Frame):
 
     def move(self, new_x, new_y):
         if self.my_board[new_y][new_x] != '0':
-            self.my_board[new_y][new_x] = 'x'
+            self.my_board[new_y][new_x] = 'U'
             self.my_board[self.userY][self.userX] = '1'
             self.userX = new_x
             self.userY = new_y
