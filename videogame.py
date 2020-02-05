@@ -3,6 +3,7 @@
 from tkinter import *
 import _curses as curses
 
+
 # def printBoard():
 #     print(" ---" * len(my_board[0]))
 #
@@ -15,7 +16,6 @@ import _curses as curses
 
 
 class boardGame(Frame):
-
     # @property
     # def canvas_size(self):
     #     return(self.width * square_size, self.height * square_size)
@@ -23,9 +23,9 @@ class boardGame(Frame):
     my_board = [['0', '0', '0', '0', '0', '0', '0'],
                 ['0', '1', '1', '1', '1', '1', '0'],
                 ['0', '1', '1', '1', '1', '1', '0'],
-                ['0', '1', '1', 'x', '1', '1', '0'],
+                ['1', '1', '1', 'x', '1', '1', '0'],
                 ['0', '1', '1', '1', '1', '1', '0'],
-                ['0', '1', '1', '1', '1', '1', '0'],
+                ['0', '1', '1', '1', '0', '1', '0'],
                 ['0', '1', '1', '1', '1', '1', '0'],
                 ['0', '0', '0', '0', '0', '0', '0']]
 
@@ -78,28 +78,32 @@ class boardGame(Frame):
         self.canvas.tag_lower("square")
 
     def leftkey(self, event):
-        newX = self.userX - 1
-        newY = self.userY
 
-        self.my_board[newY][newX] = 'x'
-        self.my_board[self.userY][self.userX] = '1'
-
-        # self.userX
-
-        self.drawBoard()
-
+        if self.userX - 1 >= 0:
+            self.move(self.userX - 1, self.userY)
+            self.drawBoard()
 
     def rightkey(self, event):
-        print("pressed : left")
+        if self.userX + 1 < self.width:
+            self.move(self.userX + 1, self.userY)
+            self.drawBoard()
 
     def upkey(self, event):
-        print("pressed : left")
+        if self.userY + 1 < self.height:
+            self.move(self.userX, self.userY + 1)
+            self.drawBoard()
 
     def downkey(self, event):
-        print("pressed : left")
+        if self.userY - 1 >= 0:
+            self.move(self.userX, self.userY - 1)
+            self.drawBoard()
 
-    # def click(self, event):
-    #     print("clicked")
+    def move(self, new_x, new_y):
+        if self.my_board[new_y][new_x] != '0':
+            self.my_board[new_y][new_x] = 'x'
+            self.my_board[self.userY][self.userX] = '1'
+            self.userX = new_x
+            self.userY = new_y
 
 
 def main():
