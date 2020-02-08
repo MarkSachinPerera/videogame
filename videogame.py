@@ -20,6 +20,14 @@ class boardGame(Frame):
     # def canvas_size(self):
     #     return(self.width * square_size, self.height * square_size)
 
+    # U - user position
+    # 0 - Wall, can't move here
+    # 1 - Walk area
+    # X - marker piece
+    # T - Target piece, cover it up.
+    # @TODO G - gate piece, next level
+    # @TODO W - Successfully covered Target
+
     my_board = [['0', '0', '0', '0', '0', '0', '0'],
                 ['0', '1', '1', '1', '1', 'T', '0'],
                 ['0', '1', '1', '1', '1', 'X', '0'],
@@ -40,6 +48,8 @@ class boardGame(Frame):
         self.parent = parent
         self.gif_dirt = PhotoImage(file='dirtblock.png')
         self.gif_tnt = PhotoImage(file='TNT.png')
+        self.gif_user = PhotoImage(file='user.png')
+        self.gif_blank = PhotoImage(file='blank.png')
 
         Frame.__init__(self, parent)
 
@@ -73,44 +83,66 @@ class boardGame(Frame):
                 if self.my_board[row][col] == '0':
                     self.canvas.create_rectangle(x1, y1, x2, y2, outline="black", fill="dark gray", tags="square")
                 elif self.my_board[row][col] == '1':
-                    self.canvas.create_rectangle(x1, y1, x2, y2, outline="black", fill="green", tags="square")
+                    self.canvas.create_rectangle(x1, y1, x2, y2, outline="black", fill="#02B56B", tags="square")
+                    self.canvas.create_image(x1 + (square_size / 2), y1 + (square_size / 2), image=self.gif_blank)
                 elif self.my_board[row][col] == 'U':
-                    self.canvas.create_rectangle(x1, y1, x2, y2, outline="black", fill="red", tags="square")
+                    self.canvas.create_rectangle(x1, y1, x2, y2, outline="black", fill="#02B56B", tags="square")
+                    self.canvas.create_image(x1 + (square_size / 2), y1 + (square_size / 2), image=self.gif_user)
                 elif self.my_board[row][col] == 'T':
-                    self.canvas.create_rectangle(x1, y1, x2, y2, outline="black", fill="green", tags="square")
+                    self.canvas.create_rectangle(x1, y1, x2, y2, outline="black", fill="#02B56B", tags="square")
                     self.canvas.create_image(x1 + (square_size / 2), y1 + (square_size / 2), image=self.gif_tnt)
                 elif self.my_board[row][col] == 'X':
-                    self.canvas.create_rectangle(x1, y1, x2, y2, outline="black", fill="green", tags="square")
+                    self.canvas.create_rectangle(x1, y1, x2, y2, outline="black", fill="#02B56B", tags="square")
                     self.canvas.create_image(x1 + (square_size / 2), y1 + (square_size / 2), image=self.gif_dirt)
+                elif self.my_board[row][col] == 'W':
+                    self.canvas.create_rectangle(x1, y1, x2, y2, outline="black", fill="yellow", tags="square")
         self.canvas.tag_lower("square")
 
     def leftkey(self, event):
-
         if self.userX - 1 >= 0:
-            self.move(self.userX - 1, self.userY)
+            self.move(self.userX - 1, self.userY, "Left")
             self.drawBoard()
 
     def rightkey(self, event):
         if self.userX + 1 < self.width:
-            self.move(self.userX + 1, self.userY)
+            self.move(self.userX + 1, self.userY, "Right")
             self.drawBoard()
 
     def upkey(self, event):
         if self.userY + 1 < self.height:
-            self.move(self.userX, self.userY + 1)
+            self.move(self.userX, self.userY + 1, "Up")
             self.drawBoard()
 
     def downkey(self, event):
         if self.userY - 1 >= 0:
-            self.move(self.userX, self.userY - 1)
+            self.move(self.userX, self.userY - 1, "Down")
             self.drawBoard()
 
-    def move(self, new_x, new_y):
-        if self.my_board[new_y][new_x] != '0':
+    def move(self, new_x, new_y, direction):
+        if self.my_board[new_y][new_x] == 'X':
+            # couple of cases:
+            # 1. Successfully covered target
+            # 2. Blocked Direction
+            # 3. Other direction
+            marker_x = new_x
+            marker_y = new_y
+            if direction == "Right":
+                if marker_x + 1 < self.width:
+                    if self.my_board[marker_y][marker_x + 1] == 'T':
+                        print("target hit")
+                    elif self.my_board[marker_y][marker_x + 1] == '1':
+                        self.my_board[marker_y][marker_x + 1] = 'X'
+                        self.my_board[new_y][new_x] = 'U'
+                        self.my_board[self.userY][self.userX] = '1'
+                        self.userX = new_x
+                        self.userY = new_y
+                print("dirt")
+        elif self.my_board[new_y][new_x] == '1':
             self.my_board[new_y][new_x] = 'U'
             self.my_board[self.userY][self.userX] = '1'
             self.userX = new_x
             self.userY = new_y
+
 
 
 def main():
