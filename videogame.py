@@ -96,6 +96,7 @@ class boardGame(Frame):
                     self.canvas.create_image(x1 + (square_size / 2), y1 + (square_size / 2), image=self.gif_dirt)
                 elif self.my_board[row][col] == 'W':
                     self.canvas.create_rectangle(x1, y1, x2, y2, outline="black", fill="yellow", tags="square")
+                    self.canvas.create_image(x1 + (square_size / 2), y1 + (square_size / 2), image=self.gif_dirt)
         self.canvas.tag_lower("square")
 
     def leftkey(self, event):
@@ -124,25 +125,27 @@ class boardGame(Frame):
             # 1. Successfully covered target
             # 2. Blocked Direction
             # 3. Other direction
-            marker_x = new_x
-            marker_y = new_y
             if direction == "Right":
-                if marker_x + 1 < self.width:
-                    if self.my_board[marker_y][marker_x + 1] == 'T':
-                        print("target hit")
-                    elif self.my_board[marker_y][marker_x + 1] == '1':
-                        self.my_board[marker_y][marker_x + 1] = 'X'
-                        self.my_board[new_y][new_x] = 'U'
-                        self.my_board[self.userY][self.userX] = '1'
-                        self.userX = new_x
-                        self.userY = new_y
-                print("dirt")
+                if new_x + 1 < self.width:
+                    if self.my_board[new_y][new_x + 1] == 'T':
+                        self.double_move(new_x, new_y, 'W')
+                    elif self.my_board[new_y][new_x + 1] == '1':
+                        self.double_move(new_x, new_y, 'X')
+
         elif self.my_board[new_y][new_x] == '1':
             self.my_board[new_y][new_x] = 'U'
             self.my_board[self.userY][self.userX] = '1'
             self.userX = new_x
             self.userY = new_y
 
+    def double_move(self, new_x, new_y, board_piece):
+        marker_x = new_x
+        marker_y = new_y
+        self.my_board[marker_y][marker_x + 1] = board_piece
+        self.my_board[new_y][new_x] = 'U'
+        self.my_board[self.userY][self.userX] = '1'
+        self.userX = new_x
+        self.userY = new_y
 
 
 def main():
