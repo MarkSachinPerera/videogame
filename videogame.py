@@ -29,12 +29,12 @@ class boardGame(Frame):
     # @TODO W - Successfully covered Target
 
     my_board = [['0', '0', '0', '0', '0', '0', '0'],
-                ['0', '1', '1', '1', '1', 'T', '0'],
-                ['0', '1', '1', '1', '1', 'X', '0'],
-                ['1', '1', '1', 'U', '1', '1', '0'],
                 ['0', '1', '1', '1', '1', '1', '0'],
-                ['0', '1', '1', '1', '0', '1', '0'],
-                ['0', '1', '1', '1', 'X', 'T', '0'],
+                ['0', 'T', 'X', '1', '1', '1', '0'],
+                ['1', '1', '1', 'U', '1', '1', '0'],
+                ['0', '1', '1', '1', 'X', '1', '0'],
+                ['0', '1', '1', '1', 'T', '1', '0'],
+                ['0', '1', '1', '1', '1', '1', '0'],
                 ['0', '0', '0', '0', '0', '0', '0']]
 
     def __init__(self, parent, square_size=92):
@@ -121,16 +121,39 @@ class boardGame(Frame):
 
     def move(self, new_x, new_y, direction):
         if self.my_board[new_y][new_x] == 'X':
+
             # couple of cases:
             # 1. Successfully covered target
             # 2. Blocked Direction
             # 3. Other direction
+
             if direction == "Right":
                 if new_x + 1 < self.width:
                     if self.my_board[new_y][new_x + 1] == 'T':
-                        self.double_move(new_x, new_y, 'W')
+                        self.double_move(new_x, new_y, 'W', 1, 0)
                     elif self.my_board[new_y][new_x + 1] == '1':
-                        self.double_move(new_x, new_y, 'X')
+                        self.double_move(new_x, new_y, 'X', 1, 0)
+
+            elif direction == "Down":
+                if new_y - 1 >= 0:
+                    if self.my_board[new_y - 1][new_x] == 'T':
+                        self.double_move(new_x, new_y, 'W', 0,  -1)
+                    elif self.my_board[new_y - 1][new_x] == '1':
+                        self.double_move(new_x, new_y, 'X', 0, -1)
+
+            elif direction == "Up":
+                if new_y + 1 < self.height:
+                    if self.my_board[new_y + 1][new_x] == 'T':
+                        self.double_move(new_x, new_y, 'W', 0,  1)
+                    elif self.my_board[new_y + 1][new_x] == '1':
+                        self.double_move(new_x, new_y, 'X', 0, 1)
+
+            elif direction == "Left":
+                if new_x - 1 >= 0:
+                    if self.my_board[new_y][new_x - 1] == 'T':
+                        self.double_move(new_x, new_y, 'W', -1, 0)
+                    elif self.my_board[new_y][new_x - 1] == '1':
+                        self.double_move(new_x, new_y, 'X', -1, 0)
 
         elif self.my_board[new_y][new_x] == '1':
             self.my_board[new_y][new_x] = 'U'
@@ -138,10 +161,10 @@ class boardGame(Frame):
             self.userX = new_x
             self.userY = new_y
 
-    def double_move(self, new_x, new_y, board_piece):
+    def double_move(self, new_x, new_y, board_piece, direction_x, direction_y):
         marker_x = new_x
         marker_y = new_y
-        self.my_board[marker_y][marker_x + 1] = board_piece
+        self.my_board[marker_y + direction_y][marker_x + direction_x] = board_piece
         self.my_board[new_y][new_x] = 'U'
         self.my_board[self.userY][self.userX] = '1'
         self.userX = new_x
