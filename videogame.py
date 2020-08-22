@@ -214,6 +214,9 @@ class boardGame(Frame):
         elif self.my_board == self.my_board_2:
             self.floor_2_target_count = self.floor_2_target_count - 1
 
+        if self.floor_2_target_count == 0 and self.floor_1_target_count == 0:
+            print("Yay! you did it.")
+
     # def place_piece_on_gate(self):
 
     #     for i in self.my_board:
