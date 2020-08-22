@@ -22,20 +22,38 @@ class boardGame(Frame):
 
     # U - user position
     # 0 - Wall, can't move here
-    # 1 - Walk area
+    # 1 - Walk area (green)
     # X - marker piece
     # T - Target piece, cover it up.
-    # @TODO G - gate piece, next level
-    # @TODO W - Successfully covered Target
+    # G - gate piece, next level, purple
+    # G1 - gate piece, with user on it
+    # W - Successfully covered Target
 
-    my_board = [['0', '0', '0', '0', '0', '0', '0'],
+    my_board_1 = [['0', '0', '0', '0', '0', '0', '0'],
                 ['0', '1', '1', '1', '1', '1', '0'],
                 ['0', 'T', 'X', '1', '1', '1', '0'],
-                ['1', '1', '1', 'U', '1', '1', '0'],
-                ['0', '1', '1', '1', 'X', '1', '0'],
-                ['0', '1', '1', '1', 'T', '1', '0'],
+                ['G', '1', '1', 'U', '1', '1', '0'],
+                ['0', '1', '1', 'T', 'X', '1', '0'],
+                ['0', '1', '1', '1', '1', '1', '0'],
                 ['0', '1', '1', '1', '1', '1', '0'],
                 ['0', '0', '0', '0', '0', '0', '0']]
+    floor_1_target_count = 2
+    # floor_1_complete = False
+
+    my_board_2 = [['0', '0', '0', '0', '0', '0', '0'],
+                ['0', '1', '1', '1', '1', '1', '0'],
+                ['0', '1', '1', '1', '1', '1', '0'],
+                ['G', '1', '1', '1', '1', 'X', '0'],
+                ['0', '1', '1', '1', '1', 'T', '0'],
+                ['0', '1', '1', '1', '1', '1', '0'],
+                ['0', 'T', 'X', '1', '1', '1', '0'],
+                ['0', '0', '0', '0', '0', '0', '0']]
+    floor_2_target_count = 2
+    # floor_2_complete = False
+
+    my_board = my_board_1
+
+
 
     def __init__(self, parent, square_size=92):
         self.width = 7
@@ -50,6 +68,7 @@ class boardGame(Frame):
         self.gif_tnt = PhotoImage(file='TNT.png')
         self.gif_user = PhotoImage(file='user.png')
         self.gif_blank = PhotoImage(file='blank.png')
+        self.gif_ladder = PhotoImage(file='Ladder.png')
 
         Frame.__init__(self, parent)
 
@@ -85,6 +104,12 @@ class boardGame(Frame):
                 elif self.my_board[row][col] == '1':
                     self.canvas.create_rectangle(x1, y1, x2, y2, outline="black", fill="#02B56B", tags="square")
                     self.canvas.create_image(x1 + (square_size / 2), y1 + (square_size / 2), image=self.gif_blank)
+                elif self.my_board[row][col] == 'G':
+                    self.canvas.create_rectangle(x1, y1, x2, y2, outline="black", fill="#02B56B", tags="square")
+                    self.canvas.create_image(x1 + (square_size / 2), y1 + (square_size / 2), image=self.gif_ladder)
+                elif self.my_board[row][col] == 'G1':
+                    self.canvas.create_rectangle(x1, y1, x2, y2, outline="black", fill="#800080", tags="square")
+                    self.canvas.create_image(x1 + (square_size / 2), y1 + (square_size / 2), image=self.gif_user)
                 elif self.my_board[row][col] == 'U':
                     self.canvas.create_rectangle(x1, y1, x2, y2, outline="black", fill="#02B56B", tags="square")
                     self.canvas.create_image(x1 + (square_size / 2), y1 + (square_size / 2), image=self.gif_user)
@@ -131,6 +156,7 @@ class boardGame(Frame):
                 if new_x + 1 < self.width:
                     if self.my_board[new_y][new_x + 1] == 'T':
                         self.double_move(new_x, new_y, 'W', 1, 0)
+                        self.update_target_count()
                     elif self.my_board[new_y][new_x + 1] == '1':
                         self.double_move(new_x, new_y, 'X', 1, 0)
 
@@ -138,6 +164,7 @@ class boardGame(Frame):
                 if new_y - 1 >= 0:
                     if self.my_board[new_y - 1][new_x] == 'T':
                         self.double_move(new_x, new_y, 'W', 0,  -1)
+                        self.update_target_count()
                     elif self.my_board[new_y - 1][new_x] == '1':
                         self.double_move(new_x, new_y, 'X', 0, -1)
 
@@ -145,6 +172,7 @@ class boardGame(Frame):
                 if new_y + 1 < self.height:
                     if self.my_board[new_y + 1][new_x] == 'T':
                         self.double_move(new_x, new_y, 'W', 0,  1)
+                        self.update_target_count()
                     elif self.my_board[new_y + 1][new_x] == '1':
                         self.double_move(new_x, new_y, 'X', 0, 1)
 
@@ -152,6 +180,7 @@ class boardGame(Frame):
                 if new_x - 1 >= 0:
                     if self.my_board[new_y][new_x - 1] == 'T':
                         self.double_move(new_x, new_y, 'W', -1, 0)
+                        self.update_target_count()
                     elif self.my_board[new_y][new_x - 1] == '1':
                         self.double_move(new_x, new_y, 'X', -1, 0)
 
@@ -161,6 +190,15 @@ class boardGame(Frame):
             self.userX = new_x
             self.userY = new_y
 
+        elif self.my_board[new_y][new_x] == 'G' and self.floor_1_target_count == 0 and self.my_board == self.my_board_1:
+            self.my_board = self.my_board_2
+            self.my_board[self.userY][self.userX] = 'U'
+
+        elif self.my_board == self.my_board_2 and self.floor_2_target_count == 0 and self.my_board[new_y][new_x] == 'G':
+            self.my_board = self.my_board_1
+
+
+
     def double_move(self, new_x, new_y, board_piece, direction_x, direction_y):
         marker_x = new_x
         marker_y = new_y
@@ -169,6 +207,19 @@ class boardGame(Frame):
         self.my_board[self.userY][self.userX] = '1'
         self.userX = new_x
         self.userY = new_y
+
+    def update_target_count(self):
+        if self.my_board == self.my_board_1:
+            self.floor_1_target_count = self.floor_1_target_count - 1
+        elif self.my_board == self.my_board_2:
+            self.floor_2_target_count = self.floor_2_target_count - 1
+
+    # def place_piece_on_gate(self):
+
+    #     for i in self.my_board:
+    #         for j in i:
+    #             if j == 'G':
+    #                 j = '0'
 
 
 def main():
