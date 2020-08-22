@@ -45,3 +45,13 @@ mymainframe.pack()  # pack() arrange geometry
 
 mywindow.mainloop()  # launch the program / window
 ```
+
+## circles
+```buildoutcfg
+We can create an oval on a canvas c with the following method:
+
+id = C.create_oval ( x0, y0, x1, y1, option, ... )
+This method returns the object ID of the new oval object on the canvas C.
+
+The following script draws a circle around the point (75,75) with the radius 25:
+```
