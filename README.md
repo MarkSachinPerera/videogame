@@ -1,4 +1,6 @@
-The video game based on the ai project.
+a refresher project on python. 
+
+\/ \/ \/ \/ \/ \/ \/ RANDOM NOTES
 
 ## Frames and Bottons
 
